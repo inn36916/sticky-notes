@@ -1,0 +1,9 @@
+body { margin: 0; padding: 6px; background: #faf7ef; color: #332e26; font: 14px "Microsoft YaHei", sans-serif; }
+button { border: 1px solid #bbb5a8; border-radius: 6px; padding: 8px; background: #fff; cursor: pointer; font: inherit; color: inherit; }
+button:focus-visible { outline: 3px solid #457baa; }
+#toggle { width: 100%; }
+#cards { overflow: auto; max-height: 320px; }
+#cards button { display: block; width: 100%; margin-top: 6px; text-align: left; overflow-wrap: anywhere; border-left-width: 7px; }
+
+button { box-sizing: border-box; }
+#toggle { white-space: nowrap; }

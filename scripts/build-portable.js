@@ -1,0 +1,21 @@
+'use strict'
+const fs = require('fs')
+const path = require('path')
+const { execFileSync } = require('child_process')
+const root = path.join(__dirname, '..')
+const version = require('../package.json').version
+const target = path.join(root, 'dist', 'StickyNotes-' + version + '-win-x64')
+if (fs.existsSync(target)) throw new Error('输出目录已存在，请先移动已有版本：' + target)
+fs.mkdirSync(target, { recursive: true })
+fs.cpSync(path.join(root, 'node_modules/electron/dist'), target, { recursive: true })
+fs.renameSync(path.join(target, 'electron.exe'), path.join(target, 'StickyNotes.exe'))
+const appDir = path.join(target, 'resources', 'app')
+fs.mkdirSync(appDir, { recursive: true })
+for (const name of ['main.js', 'preload.js', 'preload-worker.js', 'package.json', 'lib', 'main', 'src', 'assets']) fs.cpSync(path.join(root, name), path.join(appDir, name), { recursive: true })
+fs.cpSync(path.join(root, 'node_modules'), path.join(appDir, 'node_modules'), { recursive: true, filter: source => !['electron', '.bin', '@electron'].includes(path.basename(source)) })
+fs.writeFileSync(path.join(target, 'portable.txt'), 'Data is stored in the data folder beside StickyNotes.exe.\n')
+fs.copyFileSync(path.join(root, 'docs/PORTABLE.md'), path.join(target, '使用说明.md'))
+fs.mkdirSync(path.join(target, 'data'))
+const zip = target + '.zip'
+execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-File', path.join(__dirname, 'zip-portable.ps1'), '-Source', target, '-Destination', zip], { windowsHide: true, stdio: 'inherit' })
+console.log('便携版：' + zip)

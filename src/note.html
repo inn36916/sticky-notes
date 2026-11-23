@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: blob: sticky-att:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'none'" />
+<title>便签</title>
+<link rel="stylesheet" href="note.css" />
+<link rel="stylesheet" href="../node_modules/katex/dist/katex.min.css" />
+<link rel="stylesheet" href="ai-toolbar.css" />
+</head>
+<body>
+<div class="stage">
+  <section class="note" id="note" data-dark="0" data-collapsed="0">
+    <!-- 贴边收纳条：只在收缩态显示，鼠标靠近时由主进程自动展开 -->
+    <div class="edge-tab" id="edgeTab" title="鼠标靠近可展开">
+      <span class="et-grip" aria-hidden="true"></span>
+      <span class="et-title" id="etTitle"></span>
+    </div>
+
+    <!-- 八向缩放手柄 -->
+    <div class="rz rz-n"  data-dir="n"></div>
+    <div class="rz rz-s"  data-dir="s"></div>
+    <div class="rz rz-e"  data-dir="e"></div>
+    <div class="rz rz-w"  data-dir="w"></div>
+    <div class="rz rz-ne" data-dir="ne"></div>
+    <div class="rz rz-nw" data-dir="nw"></div>
+    <div class="rz rz-se" data-dir="se"></div>
+    <div class="rz rz-sw" data-dir="sw"></div>
+
+    <header class="bar" id="bar">
+      <div class="bar-left">
+        <span class="dot" title="颜色"></span>
+        <input id="title" class="title" type="text" maxlength="80"
+               placeholder="未命名便签" spellcheck="false" />
+      </div>
+      <div class="bar-actions">
+        <button class="ico only-edit" id="sourceToggle" data-act="source" title="切换 Markdown 源码模式 (Ctrl+Shift+M)" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8.5 7.5 4 12l4.5 4.5M15.5 7.5 20 12l-4.5 4.5M13.5 6l-3 12"/>
+          </svg>
+        </button>
+        <button class="ico only-edit" data-act="read" title="切换到阅读模式（隐藏按钮，只看内容）">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2.6 12S6.2 5.9 12 5.9 21.4 12 21.4 12 17.8 18.1 12 18.1 2.6 12 2.6 12Z"/>
+            <circle cx="12" cy="12" r="2.7"/>
+          </svg>
+        </button>
+        <button class="ico only-read primary" data-act="edit" title="回到编辑模式">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 20h4L18.2 9.8a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="M13.6 6.4l4 4"/>
+          </svg>
+        </button>
+        <button class="ico" data-act="pin" title="窗口置顶">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 4h6l-1 5 3.5 3.5V15H6.5v-2.5L10 9 9 4Z"/><path d="M12 15v5"/>
+          </svg>
+        </button>
+        <button class="ico" data-act="panel" title="外观与设置">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <path d="M4 7.5h9M17.5 7.5H20M4 16.5h3.5M12 16.5h8"/>
+            <circle cx="15" cy="7.5" r="2.3"/><circle cx="9.5" cy="16.5" r="2.3"/>
+          </svg>
+        </button>
+        <button class="ico" data-act="hide" title="隐藏到托盘（内容保留）">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+            <path d="M6 12h12"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="toolbar" id="toolbar">
+      <button class="tbtn" data-cmd="bold" title="加粗 (Ctrl+B)"><span class="g-b">B</span></button>
+      <button class="tbtn" data-cmd="italic" title="斜体 (Ctrl+I)"><span class="g-i">I</span></button>
+      <button class="tbtn" data-cmd="underline" title="下划线 (Ctrl+U)"><span class="g-u">U</span></button>
+      <button class="tbtn" data-cmd="strikeThrough" title="删除线"><span class="g-s">S</span></button>
+      <span class="sep"></span>
+      <button class="tbtn" data-act="font-dec" title="减小字号">A<sup>−</sup></button>
+      <button class="tbtn" data-act="font-inc" title="增大字号">A<sup>+</sup></button>
+      <label class="tbtn color-btn" title="文字颜色">
+        <input type="color" id="textColor" value="#3A3325" />
+        <span class="swatch" id="colorSwatch"></span>
+        <svg class="caret" viewBox="0 0 10 10"><path d="M2 4l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </label>
+      <span class="sep"></span>
+      <button class="tbtn" data-cmd="insertUnorderedList" title="无序列表">
+        <svg viewBox="0 0 22 22"><path d="M8 6h11M8 11h11M8 16h11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="4" cy="6" r="1.3" fill="currentColor"/><circle cx="4" cy="11" r="1.3" fill="currentColor"/><circle cx="4" cy="16" r="1.3" fill="currentColor"/></svg>
+      </button>
+      <button class="tbtn" data-act="task" title="新增任务">☐</button>
+      <button class="tbtn" data-cmd="insertOrderedList" title="有序列表">
+        <svg viewBox="0 0 22 22"><path d="M9 6h10M9 11h10M9 16h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.4 4.8h1v3.4M2.9 11.2c0-.7.6-1.1 1.2-1.1.7 0 1.1.5 1.1 1 0 1.2-2.3 1.6-2.3 3.1H5.4" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+      <span class="sep"></span>
+      <button class="tbtn" data-act="image" title="插入图片文件">
+        <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3" y="4.5" width="16" height="13" rx="2.4"/><circle cx="8" cy="9" r="1.5"/><path d="M3.6 15.4l4.3-4 3 2.7 2.6-2.2 5 4.3" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tbtn" data-act="capture" title="截屏并插入">
+        <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 8.2V5.6A2.6 2.6 0 0 1 5.6 3h2.6M13.8 3h2.6A2.6 2.6 0 0 1 19 5.6v2.6M19 13.8v2.6a2.6 2.6 0 0 1-2.6 2.6h-2.6M8.2 19H5.6A2.6 2.6 0 0 1 3 16.4v-2.6" stroke-linecap="round"/><circle cx="11" cy="11" r="2.9"/></svg>
+      </button>
+      <button class="tbtn" data-act="board" title="打开画板：拖拽画 Mermaid 图">
+        <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2.6" y="2.6" width="16.8" height="16.8" rx="2.6" stroke-dasharray="2.6 2.2"/>
+          <rect x="5.6" y="5.6" width="5.2" height="3.6" rx="0.9"/>
+          <rect x="11" y="12.6" width="5.4" height="3.6" rx="0.9"/>
+          <path d="M8.2 9.2v3.4h2.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="tbtn" data-act="mermaid" title="插入 Mermaid 图表（写代码）">
+        <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.6" y="3.4" width="6" height="4.4" rx="1.4"/><rect x="13.4" y="3.4" width="6" height="4.4" rx="1.4"/><rect x="8" y="14.2" width="6" height="4.4" rx="1.4"/><path d="M5.6 7.8v2.6h10.8V7.8M11 10.4v3.8" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tbtn" data-act="math" title="插入 LaTeX 公式">Σ</button>
+    </div>
+
+    <div class="editor-wrap">
+      <div id="editor" class="editor" contenteditable="true" spellcheck="false"
+           data-ph="写点什么… 支持 Markdown、LaTeX 公式、粘贴截图（Ctrl+V）、Mermaid 图表"></div>
+      <textarea id="sourceEditor" class="source-editor" spellcheck="false" hidden
+                placeholder="Markdown / LaTeX 源码…"></textarea>
+    </div>
+
+    <footer class="foot">
+      <span id="stats">0 字</span>
+      <span id="saved">已保存</span>
+    </footer>
+
+    <!-- 设置面板 -->
+    <aside class="panel" id="panel" hidden>
+      <div class="panel-head">
+        <span>外观与设置</span>
+        <button class="ico" data-act="panel-close" title="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>
+        </button>
+      </div>
+      <div class="panel-body">
+        <div class="group">
+          <div class="glabel">便签颜色</div>
+          <div class="swatches" id="swatches"></div>
+          <label class="custom-color">
+            <input type="color" id="customColor" value="#FFF3B0" />
+            <span>自定义颜色</span>
+          </label>
+        </div>
+
+        <div class="group">
+          <div class="glabel">文字</div>
+          <label class="field col">
+            <span>字体</span>
+            <select id="fontFamily">
+              <option value='"Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif'>微软雅黑 / 苹方</option>
+              <option value='"SimSun", "Songti SC", serif'>宋体</option>
+              <option value='"KaiTi", "Kaiti SC", serif'>楷体</option>
+              <option value='"SimHei", "Heiti SC", sans-serif'>黑体</option>
+              <option value='"DengXian", "Microsoft YaHei", sans-serif'>等线</option>
+              <option value='"Consolas", "Cascadia Mono", monospace'>Consolas 等宽</option>
+              <option value='"Segoe UI", system-ui, sans-serif'>Segoe UI</option>
+            </select>
+          </label>
+          <label class="field"><span>字号</span><input type="range" id="fontSize" min="11" max="34" step="1" /><b id="fontSizeVal">15</b></label>
+          <label class="field"><span>行距</span><input type="range" id="lineHeight" min="1.2" max="2.6" step="0.05" /><b id="lineHeightVal">1.75</b></label>
+        </div>
+
+        <div class="group">
+          <div class="glabel">窗口与外观</div>
+          <div class="field">
+            <span>尺寸</span>
+            <input type="number" id="wIn" min="260" max="2400" />
+            <i class="times">×</i>
+            <input type="number" id="hIn" min="200" max="2000" />
+            <button class="mini" data-act="apply-size">应用</button>
+          </div>
+          <label class="field"><span>圆角</span><input type="range" id="radius" min="0" max="26" step="1" /><b id="radiusVal">14</b></label>
+          <label class="field"><span>不透明</span><input type="range" id="opacity" min="55" max="100" step="1" /><b id="opacityVal">100</b></label>
+          <label class="check"><input type="checkbox" id="shadow" /> 外阴影</label>
+          <label class="check"><input type="checkbox" id="showToolbar" /> 显示工具栏</label>
+          <label class="check"><input type="checkbox" id="alwaysOnTop" /> 窗口置顶</label>
+        </div>
+
+        <div class="group">
+          <div class="glabel">贴边收纳</div>
+          <label class="check"><input type="checkbox" id="edgeCollapse" /> 拖到屏幕边缘自动收缩</label>
+          <div class="btn-row" style="margin-top:8px">
+            <button class="btn ghost" data-act="collapse-toggle" id="collapseToggle">贴边收缩</button>
+          </div>
+          <p class="hint">收缩后便签贴在屏幕边缘变成一条窄边，鼠标移上去自动展开，移开再收回。</p>
+        </div>
+
+        <div class="group">
+          <div class="glabel">单次提醒</div>
+          <p>退出期间到期的提醒，下次启动时补发。</p>
+          <input type="datetime-local" id="reminderAt" aria-label="提醒时间" />
+          <div class="btn-row"><button class="btn" id="setReminder">保存提醒</button><button class="btn ghost" id="cancelReminder">取消提醒</button></div>
+          <div class="glabel">操作</div>
+          <button class="btn ghost" id="exportMarkdown">导出 Markdown</button>
+          <button class="btn ghost" id="exportText">导出纯文本</button>
+          <button class="btn ghost" id="archiveNote">归档便签</button>
+          <div class="btn-row">
+            <button class="btn ghost" data-act="duplicate">复制便签</button>
+            <button class="btn ghost" data-act="dashboard">便签中心</button>
+          </div>
+          <div class="btn-row" style="margin-top:8px">
+            <button class="btn ghost" data-act="clear-format">清除文字格式</button>
+            <button class="btn danger" data-act="delete">删除便签</button>
+          </div>
+          <p class="hint">隐藏或关闭只会把便签从桌面收起，内容已落盘；可从系统托盘或「便签中心」恢复。</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mermaid 编辑弹窗 -->
+    <div class="modal" id="mmdModal" hidden>
+      <div class="modal-card">
+        <div class="modal-head">
+          <span>Mermaid 图表</span>
+          <button class="mini" data-act="mmd-template">插入模板</button>
+        </div>
+        <textarea id="mmdCode" spellcheck="false" placeholder="graph TD&#10;  A[想法] --> B{可行?}&#10;  B -->|是| C[开工]&#10;  B -->|否| D[再想想]"></textarea>
+        <div class="preview" id="mmdPreview"><span class="ph">实时预览</span></div>
+        <div class="modal-foot">
+          <span class="err" id="mmdErr"></span>
+          <button class="mini" data-act="mmd-board" title="把当前代码带到画板里可视化编辑">画板编辑</button>
+          <button class="btn ghost" data-act="mmd-cancel">取消</button>
+          <button class="btn" data-act="mmd-ok">插入</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LaTeX 公式编辑弹窗 -->
+    <div class="modal" id="mathModal" hidden>
+      <div class="modal-card">
+        <div class="modal-head">
+          <span>LaTeX 公式</span>
+          <div class="math-mode-tabs">
+            <button type="button" class="mini" data-math-mode="inline" data-on="1">行内 $...$</button>
+            <button type="button" class="mini" data-math-mode="block" data-on="0">块级 $$...$$</button>
+          </div>
+        </div>
+        <div class="math-templates">
+          <button type="button" class="mini" data-math-tpl="\frac{a}{b}">分数</button>
+          <button type="button" class="mini" data-math-tpl="\sqrt{x}">根号</button>
+          <button type="button" class="mini" data-math-tpl="\int_{0}^{1} x^2 \, dx">积分</button>
+          <button type="button" class="mini" data-math-tpl="\sum_{i=1}^{n} i">求和</button>
+          <button type="button" class="mini" data-math-tpl="\begin{pmatrix} a & b \\ c & d \end{pmatrix}">矩阵</button>
+          <button type="button" class="mini" data-math-tpl="\begin{aligned} a &= b + c \\ d &= e + f \end{aligned}">对齐方程</button>
+        </div>
+        <textarea id="mathCode" spellcheck="false" placeholder="输入 LaTeX 公式，例如：E = mc^2 或 \frac{-b \pm \sqrt{b^2-4ac}}{2a}"></textarea>
+        <div class="preview math-preview" id="mathPreview"><span class="ph">KaTeX 实时预览</span></div>
+        <div class="modal-foot">
+          <span class="err" id="mathErr"></span>
+          <button type="button" class="btn ghost" data-act="math-cancel">取消</button>
+          <button type="button" class="btn" data-act="math-ok">插入</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 轻提示 -->
+    <div class="toast" id="toast" hidden></div>
+  </section>
+</div>
+
+<script src="guard.js"></script>
+<script src="../lib/utils.js"></script>
+<script src="../lib/popup-appearance.js"></script>
+<script src="../node_modules/marked/lib/marked.umd.js"></script>
+<script src="../node_modules/turndown/dist/turndown.js"></script>
+<script src="../node_modules/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
+<script src="vendor/mermaid.min.js"></script>
+<script src="../lib/dom-snapshot.js"></script>
+<script src="../lib/note-markdown.js"></script>
+<script src="../node_modules/katex/dist/katex.min.js"></script>
+<script src="ai-render.js"></script>
+<script src="ai-toolbar.js"></script>
+<script src="note.js"></script>
+</body>
+</html>

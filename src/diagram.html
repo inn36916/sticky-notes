@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'" />
+<title>Mermaid 画板</title>
+<link rel="stylesheet" href="diagram.css" />
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark"></span>
+      <div class="brand-text">
+        <h1>Mermaid 画板</h1>
+        <p>拖拽组件连线，自动生成 Mermaid 代码</p>
+      </div>
+    </div>
+
+    <div class="tools">
+      <div class="seg" role="tablist">
+        <button class="tb active" data-tool="select" title="选择 / 移动 (V)">选择</button>
+        <button class="tb" data-tool="connect" title="连线 (L)">连线</button>
+      </div>
+      <span class="vsep"></span>
+      <button class="tb" data-act="undo" title="撤销 (Ctrl+Z)" disabled>撤销</button>
+      <button class="tb" data-act="redo" title="重做 (Ctrl+Y)" disabled>重做</button>
+      <span class="vsep"></span>
+      <label class="dir">方向
+        <select id="dir">
+          <option value="TD">从上到下</option>
+          <option value="LR">从左到右</option>
+        </select>
+      </label>
+      <button class="tb" data-act="clear" title="清空画布">清空</button>
+    </div>
+
+    <div class="actions">
+      <button class="btn ghost" data-act="cancel">取消</button>
+      <button class="btn primary" data-act="apply">应用到便签</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="palette">
+      <div class="p-head">组件</div>
+      <div class="p-group" id="paletteShapes"></div>
+      <div class="p-tip">
+        <p>拖动形状到画布任意位置</p>
+        <p>双击节点可改文字</p>
+        <p>从节点四周圆点拖出连线</p>
+        <p>选中后按 Delete 删除</p>
+      </div>
+    </aside>
+
+    <section class="canvas-shell" id="canvasShell">
+      <div class="canvas-inner" id="canvasInner">
+        <svg id="svg" xmlns="http://www.w3.org/2000/svg" width="2400" height="1600" viewBox="0 0 2400 1600">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+                    orient="auto-start-reverse">
+              <path d="M0 0.6 L9.4 5 L0 9.4 z" fill="#7a8290"></path>
+            </marker>
+            <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="1" fill="#d9dde4"></circle>
+            </pattern>
+          </defs>
+          <rect class="grid-bg" x="0" y="0" width="2400" height="1600" fill="url(#grid)"></rect>
+          <g id="edgeLayer"></g>
+          <g id="nodeLayer"></g>
+          <path id="tempLine" class="temp-line" d="" style="display:none"></path>
+        </svg>
+      </div>
+      <div class="empty-hint" id="emptyHint">
+        <div class="eh-art"><span></span><span></span><span></span></div>
+        <p>从左侧拖一个组件到画布开始</p>
+      </div>
+      <div class="zoombar">
+        <button class="mini" data-act="zoom-out">−</button>
+        <span id="zoomVal">100%</span>
+        <button class="mini" data-act="zoom-in">+</button>
+        <button class="mini" data-act="zoom-reset">重置</button>
+      </div>
+    </section>
+
+    <aside class="inspector">
+      <div class="p-head">属性</div>
+      <div class="ins-empty" id="insEmpty">选中节点或连线后可编辑属性</div>
+
+      <div class="ins-body" id="insNode" hidden>
+        <label class="fld">文字
+          <input id="insText" type="text" maxlength="60" spellcheck="false" />
+        </label>
+        <label class="fld">形状
+          <select id="insShape">
+            <option value="rect">矩形</option>
+            <option value="round">圆角</option>
+            <option value="stadium">胶囊</option>
+            <option value="diamond">菱形（判断）</option>
+            <option value="circle">圆形</option>
+            <option value="cylinder">数据库</option>
+            <option value="subroutine">子程序</option>
+            <option value="hexagon">六边形</option>
+          </select>
+        </label>
+        <div class="fld-row">
+          <label class="fld">填充<input id="insFill" type="color" /></label>
+          <label class="fld">边框<input id="insStroke" type="color" /></label>
+        </div>
+        <div class="fld-row">
+          <label class="fld">宽<input id="insW" type="number" min="70" max="420" step="2" /></label>
+          <label class="fld">高<input id="insH" type="number" min="40" max="260" step="2" /></label>
+        </div>
+        <button class="btn danger sm" data-act="del-node">删除节点</button>
+      </div>
+
+      <div class="ins-body" id="insEdge" hidden>
+        <label class="fld">连线文字
+          <input id="insLabel" type="text" maxlength="24" spellcheck="false" placeholder="如：是 / 否" />
+        </label>
+        <label class="fld">线型
+          <select id="insStyle">
+            <option value="solid">实线 →</option>
+            <option value="dashed">虚线 ⇢</option>
+            <option value="thick">加粗 ⇒</option>
+          </select>
+        </label>
+        <button class="btn danger sm" data-act="del-edge">删除连线</button>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="codebar" id="codebar">
+    <div class="code-head">
+      <span class="dot"></span>
+      <span>Mermaid 代码</span>
+      <span class="spacer"></span>
+      <button class="mini" data-act="copy">复制</button>
+      <button class="mini" data-act="toggle-code">收起</button>
+    </div>
+    <pre id="code"></pre>
+  </footer>
+</div>
+
+<script src="guard.js"></script>
+<script src="../lib/utils.js"></script>
+<script src="diagram.js"></script>
+</body>
+</html>

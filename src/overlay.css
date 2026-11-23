@@ -1,0 +1,57 @@
+/* 系统级划词悬浮窗：窗口尺寸 == 内容尺寸，这里只做「取消全屏定位 + 留出阴影边距」 */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* 内容用绝对定位固定在左上角，父级尺寸完全由内容决定，方便主进程按内容改窗口大小 */
+#root {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+}
+
+/* ai-toolbar.css 里这两个是「页面内浮层」，在独立小窗里改成静态排布 */
+.ai-bar {
+  position: static;
+  display: inline-flex;
+}
+
+.ai-panel {
+  position: static;
+  width: 420px;
+  max-height: 480px;
+}
+
+/* 悬浮窗里多一个关闭按钮 */
+.ai-bar .ov-x {
+  width: 22px;
+  padding: 0;
+  justify-content: center;
+  color: #9aa4b5;
+  font-size: 12px;
+}
+.ai-bar .ov-x:hover { color: #fff; }
+:root[data-ai-bar-tone="light"] .ai-bar .ov-x,
+.ai-bar[data-tone="light"] .ov-x { color: #64748b; }
+:root[data-ai-bar-tone="light"] .ai-bar .ov-x:hover,
+.ai-bar[data-tone="light"] .ov-x:hover { color: #0f172a; }
+
+/* 独立回答窗正文允许自由划词（不影响标题栏/抓手拖动） */
+.ai-panel .ai-body {
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: text;
+}
+.ai-panel .ai-body .ai-thinking,
+.ai-panel .ai-body .ai-caret {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 独立回答窗底部（来源为便签时显示「插入便签」） */
+.ai-panel footer .ov-grow { flex: 1 1 auto; }

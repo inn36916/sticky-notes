@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<!--
+  与项目其它 7 个页面保持同一口径。
+  ★ img-src 必须含 blob:：SVG 光栅化走 `URL.createObjectURL(new Blob([svgText]))`
+    再喂给 <img> —— 少这一项 SVG 转换会全部失败（而非只是安全警告）。
+  ★ connect-src 'none'：worker 只做本地 canvas 编解码，不发任何网络请求；
+    实测 Chromium 渲染 SVG-as-image 本来也不会加载外部资源。
+  ★ PDF（2026-11-17 实测）：pdfjs 的 pdf.min.mjs 放在同目录 vendor/ 下，
+    页面脚本用 `import('./vendor/pdf.min.mjs')` 加载，Worker 用
+    `new Worker('./vendor/pdf-worker-entry.mjs', {type:'module'})` ——
+    在当前 `default-src 'self'` / `script-src 'self'` 下**都能正常工作**，
+    因此不需要为 PDF 放宽 CSP，更不会动 connect-src（离线承诺）。
+    CSP 里已有的 img-src blob: 仍然必须保留（SVG 依赖它）。
+-->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'none'" />
+<title>转换工作器</title>
+</head>
+<body>
+<script src="guard.js"></script>
+<script src="convert-worker.js"></script>
+</body>
+</html>

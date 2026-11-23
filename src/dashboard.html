@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'none'" />
+<title>便签中心</title>
+<link rel="stylesheet" href="dashboard.css" />
+<link rel="stylesheet" href="../node_modules/katex/dist/katex.min.css" />
+<link rel="stylesheet" href="ai-toolbar.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo"></span>
+      <div>
+        <h1>便签中心</h1>
+        <p id="subtitle">全部便签集中管理，隐藏的便签内容依旧保存在本地</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div class="search">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+          <circle cx="8.6" cy="8.6" r="5.2"/><path d="M12.6 12.6L17 17"/>
+        </svg>
+        <input id="search" type="text" placeholder="搜索便签内容…" spellcheck="false" />
+      </div>
+      <button class="btn ghost" id="aiConfig" title="配置自定义 AI 供应商（划词功能使用）">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 2.6l1.5 1.7 2.2-.5.6 2.2 2 .9-.9 2 .9 2-2 .9-.6 2.2-2.2-.5L10 17.4l-1.5-1.7-2.2.5-.6-2.2-2-.9.9-2-.9-2 2-.9.6-2.2 2.2.5Z"/>
+          <circle cx="10" cy="10" r="2.4"/>
+        </svg>
+        AI 供应商
+      </button>
+      <button class="btn ghost" id="convertConfig" title="设置资源管理器右键菜单的格式转换入口">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3.5 6.5h9L9.5 3.8M16.5 13.5h-9l3 2.7"/>
+        </svg>
+        格式转换
+      </button>
+      <button class="btn ghost" id="pdfTranslateBtn" title="学术文献双语 PDF 翻译（保留公式与排版）">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 5h8M8 3.5V5M5 5c.6 3 2.4 5.4 5 7M9.5 8.5C8.5 10.6 7 12.4 4.5 13.8"/>
+          <path d="M11 16.5 14 9l3 7.5M12 14h4"/>
+        </svg>
+        文献翻译
+      </button>
+      <button class="btn ghost" id="importNotes">导入</button>
+      <button class="btn" id="newNote">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M10 4.5v11M4.5 10h11"/></svg>
+        新建便签
+      </button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="chip-group">
+      <button class="chip" data-filter="all">全部 <b id="cAll">0</b></button>
+      <button class="chip" data-filter="visible">桌面显示 <b id="cVisible">0</b></button>
+      <button class="chip" data-filter="archived">归档 <b id="cArchived">0</b></button>
+      <button class="chip" data-filter="due">已到期 <b id="cDue">0</b></button>
+      <button class="chip" data-filter="hidden">已隐藏 <b id="cHidden">0</b></button>
+    </div>
+    <div class="toolbar-right">
+      <button class="link" id="showAll">全部显示</button>
+      <button class="link" id="hideAll">全部隐藏</button>
+      <span class="divider"></span>
+      <button class="link" id="backup">备份</button>
+      <button class="link" id="openDir">数据目录</button>
+    </div>
+  </div>
+
+  <section class="toolbar selection-settings" aria-label="划词与收纳设置">
+    <label class="check"><input type="checkbox" id="edgeGroups" /> 边缘卡组（Ctrl+Alt+G 打开）</label>
+    <label class="check"><input type="checkbox" id="globalSelect" /> 全局划词</label>
+    <button class="btn ghost style-trigger" id="popupStyleBtn" type="button" title="自定义工具弹窗和回答弹窗的背景颜色与透明度">
+      <span class="style-dots" aria-hidden="true"><i id="tbDot"></i><i id="ansDot"></i></span>
+      <span>弹窗外观</span>
+    </button>
+    <span>升级后已默认关闭，可在此开启。取词会使用系统剪贴板；便签内划词不受影响。</span>
+  </section>
+
+  <dialog id="reminderDialog">
+    <form method="dialog">
+      <h2>单次提醒</h2><p>应用退出期间到期的提醒将在下次启动时补发。</p>
+      <label>提醒时间 <input id="reminderAt" type="datetime-local" required /></label>
+      <p id="reminderError" role="alert"></p>
+      <button value="cancel" formnovalidate>关闭</button><button type="button" id="cancelReminder">取消提醒</button><button id="saveReminder" value="save">保存</button>
+    </form>
+  </dialog>
+  <main id="grid" class="grid"></main>
+
+  <div class="empty" id="empty" hidden>
+    <div class="empty-art">
+      <span></span><span></span><span></span>
+    </div>
+    <h2>还没有便签</h2>
+    <p>点击右上角「新建便签」，开始记录第一条想法</p>
+  </div>
+
+  <footer class="statusbar">
+    <span id="status">就绪</span>
+    <span class="hint">双击卡片可在桌面定位该便签</span>
+  </footer>
+
+  <!-- ============ AI 供应商配置 ============ -->
+  <div class="modal" id="aiModal" hidden>
+    <div class="modal-card" role="dialog" aria-label="自定义 AI 供应商">
+      <header class="modal-head">
+        <div>
+          <h2>自定义 AI 供应商</h2>
+          <p>OpenAI 兼容接口，划词的三项操作都会走这里配置的服务</p>
+        </div>
+        <button class="modal-x" id="aiClose" title="关闭">✕</button>
+      </header>
+
+      <div class="ai-layout">
+        <aside class="ai-side">
+          <div class="ai-side-head">
+            <span>已添加</span>
+            <button class="mini" id="aiAdd">＋ 新增</button>
+          </div>
+          <ul class="ai-providers" id="aiProviders"></ul>
+          <p class="ai-side-empty" id="aiEmpty">还没有供应商，点「＋ 新增」开始配置</p>
+        </aside>
+
+        <section class="ai-form">
+          <label class="fld">
+            <span>名称</span>
+            <input id="aiName" placeholder="例如 OpenAI 官方 / 公司网关" spellcheck="false" />
+          </label>
+
+          <label class="fld">
+            <span>Base URL</span>
+            <input id="aiBase" placeholder="https://api.openai.com/v1" spellcheck="false" autocomplete="off" />
+            <em class="tip">填到 /v1 即可，不带也能自动补</em>
+          </label>
+
+          <label class="fld">
+            <span>API Key</span>
+            <div class="key-row">
+              <input id="aiKey" type="password" placeholder="sk-…" spellcheck="false" autocomplete="off" />
+              <button class="eye" id="aiKeyEye" type="button" title="显示 / 隐藏">显示</button>
+            </div>
+            <em class="tip key-hint" id="aiKeyTip" hidden>已保存 <b></b>，留空表示不修改</em>
+          </label>
+
+          <div class="model-block">
+            <div class="model-head">
+              <span>默认模型</span>
+              <button class="mini" id="aiFetch" type="button">重新拉取</button>
+            </div>
+            <select id="aiModel" class="model-select"></select>
+            <input id="aiModelManual" class="model-manual" placeholder="手填模型 ID，例如 gpt-4o-mini" spellcheck="false" hidden />
+            <p class="model-status" id="aiModelStatus">填写 Base URL 与 API Key 后会自动拉取</p>
+          </div>
+
+          <label class="check">
+            <input type="checkbox" id="aiActive" />
+            <span>设为当前使用（划词时调用这个供应商的默认模型）</span>
+          </label>
+
+          <footer class="ai-actions">
+            <button class="link danger" id="aiDelete" hidden>删除该供应商</button>
+            <span class="grow"></span>
+            <button class="btn ghost" id="aiCancel">取消</button>
+            <button class="btn" id="aiSave">保存配置</button>
+          </footer>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 格式转换（资源管理器右键入口） ============ -->
+  <div class="modal" id="convertModal" hidden>
+    <div class="modal-card narrow" role="dialog" aria-label="格式转换设置">
+      <header class="modal-head">
+        <div>
+          <h2>格式转换</h2>
+          <p>在资源管理器里右键文件，即可把它转换成别的格式</p>
+        </div>
+        <button class="modal-x" id="convertClose" title="关闭">✕</button>
+      </header>
+
+      <section class="ai-form">
+        <label class="check">
+          <input type="checkbox" id="verbToggle" />
+          <span>在资源管理器右键菜单中显示「用桌面便签转换…」</span>
+        </label>
+
+        <p class="conv-note" id="verbStatus">正在检查…</p>
+
+        <div class="conv-hint" id="verbHint" hidden>
+          <b>Windows 11：</b>该入口位于右键菜单的「<b>显示更多选项</b>」里（Win10 则直接显示在菜单中）。
+          <br />
+          <b>无需额外安装</b>：图片与文本/数据转换由内置引擎完成，全部离线。
+          装了 Filee 还会自动多出 PDF、Office 等格式。
+        </div>
+
+        <div class="conv-engines">
+          <h3>当前可用的转换引擎</h3>
+          <!-- ★ 这里必须用 <div> 而不是 <p>：
+               引擎条目是 <div class="engine-item">，而 <p> 不能包含块级子元素 ——
+               HTML 解析器会自动把 <div> 从 <p> 里踢出来变成兄弟节点，
+               于是 "#engineList .engine-item" 这类后代选择器会全部失效（静默不渲染）。 -->
+          <div class="conv-note" id="engineList">正在读取…</div>
+          <p class="conv-note dim">
+            想接入新的转换引擎？把一个 .js 文件放进
+            <code id="pluginDir">插件目录</code>，重启应用即可自动加载（无需修改程序）。
+          </p>
+        </div>
+
+        <footer class="ai-actions">
+          <button class="link danger" id="verbUninstall" hidden>卸载菜单项</button>
+          <span class="grow"></span>
+          <button class="btn ghost" id="verbCancel">关闭</button>
+        </footer>
+      </section>
+    </div>
+  </div>
+
+  <!-- ============ 学术文献 PDF 翻译 ============ -->
+  <div class="modal" id="pdfTranslateModal" hidden>
+    <div class="modal-card medium pdf-translate-modal" role="dialog" aria-modal="true" aria-labelledby="pdfTranslateTitle">
+      <header class="modal-head">
+        <div>
+          <h2 id="pdfTranslateTitle">学术文献 PDF 翻译</h2>
+          <p class="modal-sub">基于本地一次性 Token 代理与 pdf2zh_next，安全翻译保留公式与排版</p>
+        </div>
+        <button class="icon-btn" id="pdfTransClose" title="关闭">✕</button>
+      </header>
+      <section class="ai-form">
+        <div class="pdf-env-box">
+          <div class="pdf-env-row">
+            <span class="engine-dot" id="pdfTransEnvDot"></span>
+            <span class="pdf-env-text" id="pdfTransEnvStatus">正在检测翻译引擎环境…</span>
+            <button type="button" class="btn primary mini-btn" id="pdfTransInstallBtn">一键安装环境</button>
+            <button type="button" class="btn danger mini-btn" id="pdfTransCancelInstallBtn" hidden>停止安装</button>
+            <button type="button" class="btn ghost mini-btn" id="pdfTransRefreshEnv">重新检测</button>
+          </div>
+          <div class="pdf-mirror-row" id="pdfTransInstallToolbar">
+            <label class="pdf-mirror-opt">
+              <input id="pdfTransUseMirror" type="checkbox" />
+              <span>使用清华 PyPI 镜像加速</span>
+            </label>
+            <span class="pdf-uv-hint" id="pdfTransUvHint"></span>
+          </div>
+          <div class="conv-note dim" id="pdfTransInstallGuide" hidden>
+            未检测到 uv，可先在 PowerShell 运行：<code>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code>
+            <button type="button" class="link" id="pdfTransCopyInstall">复制命令</button>
+          </div>
+          <div class="pdf-install-log-wrap" id="pdfTransInstallLogWrap" hidden>
+            <div class="pdf-install-msg" id="pdfTransInstallMsg">正在准备环境…</div>
+            <pre class="pdf-install-log" id="pdfTransInstallLog"></pre>
+          </div>
+          <div class="conv-note" id="pdfTransAiBadge"></div>
+        </div>
+
+        <div class="pdf-dropzone" id="pdfTransDrop">
+          <div class="pdf-drop-info">
+            <div class="pdf-drop-label" id="pdfTransFileLabel">请选择或拖入学术 PDF 文件</div>
+            <div class="pdf-drop-path" id="pdfTransFilePath">默认输出双语对照 PDF，保存至原文件同目录</div>
+          </div>
+          <button type="button" class="btn ghost" id="pdfTransPickBtn">选择 PDF…</button>
+        </div>
+
+        <div class="pdf-grid-2">
+          <label class="field">
+            <span>运行方式</span>
+            <select id="pdfTransBackend">
+              <option value="cli">内置引擎（本地一次性代理 + pdf2zh_next）</option>
+              <option value="server">zotero-pdf2zh 本地服务（HTTP）</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>翻译服务</span>
+            <select id="pdfTransService">
+              <option value="active-ai">当前活跃 AI 模型（推荐 · 密钥不落盘）</option>
+              <option value="bing">Bing 翻译（免密钥）</option>
+              <option value="google">Google 翻译（免密钥）</option>
+              <option value="deepl">DeepL 翻译</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="field" id="pdfTransCliWrap">
+          <span>CLI 路径（可选，留空自动探测 pdf2zh_next / pdf2zh）</span>
+          <input id="pdfTransCliPath" type="text" placeholder="例如 C:\Users\...\pdf2zh_next.exe" />
+        </label>
+
+        <label class="field" id="pdfTransServerWrap" hidden>
+          <span>zotero-pdf2zh 服务地址</span>
+          <input id="pdfTransServerUrl" type="text" placeholder="http://127.0.0.1:8888" />
+        </label>
+
+        <div class="pdf-grid-3">
+          <label class="field">
+            <span>源语言</span>
+            <select id="pdfTransLangIn">
+              <option value="en">English (en)</option>
+              <option value="auto">自动检测 (auto)</option>
+              <option value="ja">日本語 (ja)</option>
+              <option value="ko">한국어 (ko)</option>
+              <option value="fr">Français (fr)</option>
+              <option value="de">Deutsch (de)</option>
+              <option value="es">Español (es)</option>
+              <option value="ru">Русский (ru)</option>
+              <option value="zh">中文 (zh)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>目标语言</span>
+            <select id="pdfTransLangOut">
+              <option value="zh">简体中文 (zh)</option>
+              <option value="zh-TW">繁體中文 (zh-TW)</option>
+              <option value="en">English (en)</option>
+              <option value="ja">日本語 (ja)</option>
+              <option value="ko">한국어 (ko)</option>
+              <option value="fr">Français (fr)</option>
+              <option value="de">Deutsch (de)</option>
+              <option value="es">Español (es)</option>
+              <option value="ru">Русский (ru)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>输出版式</span>
+            <select id="pdfTransMode">
+              <option value="dual">双语对照 (dual)</option>
+              <option value="mono">仅译文 (mono)</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="pdf-grid-3 pdf-opts-row">
+          <label class="field">
+            <span>页码范围（可选）</span>
+            <input id="pdfTransPages" type="text" placeholder="全部页，或 1-5,8" />
+          </label>
+          <label class="field">
+            <span>并发 / QPS</span>
+            <input id="pdfTransThreads" type="number" min="1" max="16" value="4" />
+          </label>
+          <label class="pdf-check">
+            <input id="pdfTransIgnoreCache" type="checkbox" />
+            <span>忽略缓存重译</span>
+          </label>
+        </div>
+
+        <label class="pdf-check pdf-skip-term-row">
+          <input id="pdfTransSkipTerm" type="checkbox" checked />
+          <span>跳过自动术语预提取（更快更稳，推荐）</span>
+        </label>
+
+        <div class="pdf-progress-box" id="pdfTransProgressWrap" hidden>
+          <div class="pdf-progress-head">
+            <span id="pdfTransStatusMsg">准备开始翻译…</span>
+            <b id="pdfTransPct">0%</b>
+          </div>
+          <div class="pdf-progress-track">
+            <div class="pdf-progress-fill" id="pdfTransBar"></div>
+          </div>
+          <div class="pdf-proxy-live" id="pdfTransProxyLive" hidden></div>
+          <pre class="pdf-install-log pdf-trans-log" id="pdfTransLog" hidden></pre>
+        </div>
+
+        <div class="pdf-outputs-box" id="pdfTransOutputs" hidden>
+          <div class="pdf-outputs-list" id="pdfTransOutputList"></div>
+          <button type="button" class="btn ghost mini-btn" id="pdfTransOpenDirBtn">打开所在目录</button>
+        </div>
+
+        <footer class="ai-actions">
+          <button type="button" class="btn ghost" id="pdfTransSaveCfg">保存默认设置</button>
+          <span class="grow"></span>
+          <button type="button" class="btn danger" id="pdfTransCancelBtn" hidden>取消翻译</button>
+          <button type="button" class="btn primary" id="pdfTransStartBtn">开始翻译</button>
+        </footer>
+      </section>
+    </div>
+  </div>
+
+  <!-- ============ 弹窗外观设置（工具弹窗 / 回答弹窗） ============ -->
+  <div class="modal" id="popupStyleModal" hidden>
+    <div class="modal-card medium" role="dialog" aria-label="弹窗外观设置">
+      <header class="modal-head">
+        <div>
+          <h2>弹窗外观设置</h2>
+          <p>分别设置划词「工具弹窗」与「回答弹窗」的背景颜色和透明度（仅背景透明，文字保持清晰）</p>
+        </div>
+        <button class="modal-x" id="popupStyleClose" type="button" title="关闭">✕</button>
+      </header>
+
+      <div class="popup-style-body">
+        <div class="popup-preview-stage" aria-label="实时预览">
+          <div class="ai-bar-preview" id="previewBar">
+            <span class="ai-bar-grip-preview" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="pv-btn">AI 搜索</span>
+            <span class="pv-btn">解释</span>
+            <span class="pv-btn">翻译</span>
+            <span class="pv-sep"></span>
+            <span class="pv-btn">提问</span>
+            <span class="pv-btn">复制</span>
+          </div>
+
+          <div class="ai-panel-preview" id="previewPanel">
+            <header>
+              <span class="ai-grip-preview" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="pv-title">解释</span>
+              <span class="pv-meta">预览模式</span>
+              <span class="pv-pin" title="窗口置顶">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 2.4h4l-.7 3.3 2.4 2.4v1.2H4.3V8.1l2.4-2.4L6 2.4Z"/><path d="M8 9.3v4.3"/>
+                </svg>
+              </span>
+              <span class="pv-close">✕</span>
+            </header>
+            <div class="pv-body">
+              <p>这是<b>回答弹窗</b>的实时预览效果。浅色背景会自动切换为深色文字，确保阅读清晰。</p>
+            </div>
+            <footer>
+              <span class="pv-fbtn">复制</span>
+              <span class="pv-fbtn">重新生成</span>
+            </footer>
+          </div>
+        </div>
+
+        <div class="popup-style-grid">
+          <section class="popup-style-group" aria-label="工具弹窗外观">
+            <h3>工具弹窗</h3>
+            <div class="style-swatches" id="toolbarSwatches"></div>
+            <label class="style-row">
+              <span>背景颜色</span>
+              <input type="color" id="toolbarColor" value="#23272f" />
+              <code id="toolbarHex">#23272f</code>
+            </label>
+            <label class="style-row">
+              <span>不透明度</span>
+              <input type="range" id="toolbarOpacity" min="20" max="100" step="1" value="100" />
+              <b id="toolbarOpacityVal">100%</b>
+            </label>
+          </section>
+
+          <section class="popup-style-group" aria-label="回答弹窗外观">
+            <h3>回答弹窗</h3>
+            <div class="style-swatches" id="answerSwatches"></div>
+            <label class="style-row">
+              <span>背景颜色</span>
+              <input type="color" id="answerColor" value="#1e222a" />
+              <code id="answerHex">#1e222a</code>
+            </label>
+            <label class="style-row">
+              <span>不透明度</span>
+              <input type="range" id="answerOpacity" min="20" max="100" step="1" value="100" />
+              <b id="answerOpacityVal">100%</b>
+            </label>
+          </section>
+        </div>
+
+        <footer class="ai-actions popup-style-actions">
+          <button class="btn ghost" id="popupSyncAnswer" type="button">同步工具弹窗到回答弹窗</button>
+          <button class="link" id="popupResetStyle" type="button">恢复默认</button>
+          <span class="grow"></span>
+          <button class="btn" id="popupStyleDone" type="button">完成</button>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+<script src="guard.js"></script>
+<script src="../lib/utils.js"></script>
+<script src="../lib/popup-appearance.js"></script>
+<script src="../node_modules/katex/dist/katex.min.js"></script>
+<script src="ai-render.js"></script>
+<script src="ai-toolbar.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+{
+  "script": {
+    "file": "scripts/perf-input.js",
+    "mtime": "2026-11-21T01:39:26.365Z",
+    "sha256": "35e9aad42a580f6f50d51152931a57c1ccfdfd2c1c4d51aafc81e7fb480ae160",
+    "sizeBytes": 54874,
+    "startedAt": "2026-11-21T01:40:58.297Z",
+    "finishedAt": "2026-11-21T01:41:45.110Z",
+    "nonce": "PERF-NONCE-c5d66416-9387-4496-afbf-5eb072d885bc",
+    "devtoolsPort": 58002
+  },
+  "scenarios": [
+    {
+      "id": "S0",
+      "htmlBytes": 3420,
+      "inputHandlerMs": {
+        "p50": 2.05,
+        "p95": 3.03,
+        "max": 3.6
+      },
+      "cdpMs": {
+        "p50": 5.42,
+        "p95": 6.45
+      },
+      "updateIpcMs": 2.3,
+      "updateIpcUnderFlushMs": 0.9,
+      "updateIpcUnderFlushMaxMs": 1,
+      "updateIpcUnderFlushPhaseMs": 10,
+      "serializeProxyMs": 0,
+      "innerHtmlReadMs": 0,
+      "flushMs": 6.9,
+      "flushMsEndMs": 6.1,
+      "flushSamplesFirst": [
+        12.1,
+        6.7,
+        6.9
+      ],
+      "flushSamplesEnd": [
+        7,
+        6.1,
+        5.1
+      ],
+      "longTasks": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "inserted": 20,
+      "keysOk": true,
+      "stateFileBytes": 4262,
+      "keysPerSec": 12.86,
+      "capacityPerSec": 487.8,
+      "typingMs": 1555,
+      "keyCount": 20,
+      "gapMs": 60,
+      "tailPathMs": 0.6,
+      "serializePairMs": 0.1,
+      "tailLongTask": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "textContentReadMs": 0,
+      "insertMode": "cdp"
+    },
+    {
+      "id": "S1",
+      "htmlBytes": 231406,
+      "inputHandlerMs": {
+        "p50": 7.15,
+        "p95": 11.67,
+        "max": 18.6
+      },
+      "cdpMs": {
+        "p50": 40.1,
+        "p95": 58.91
+      },
+      "updateIpcMs": 4.2,
+      "updateIpcUnderFlushMs": 2.1,
+      "updateIpcUnderFlushMaxMs": 2.6,
+      "updateIpcUnderFlushPhaseMs": 10,
+      "serializeProxyMs": 1,
+      "innerHtmlReadMs": 0.9,
+      "flushMs": 9.4,
+      "flushMsEndMs": 7.2,
+      "flushSamplesFirst": [
+        24.5,
+        7.4,
+        9.4
+      ],
+      "flushSamplesEnd": [
+        8.9,
+        6.3,
+        7.2
+      ],
+      "longTasks": {
+        "count": 2,
+        "totalMs": 115,
+        "maxMs": 58
+      },
+      "inserted": 20,
+      "keysOk": true,
+      "stateFileBytes": 232630,
+      "keysPerSec": 8.47,
+      "capacityPerSec": 139.86,
+      "typingMs": 2361,
+      "keyCount": 20,
+      "gapMs": 60,
+      "tailPathMs": 6.5,
+      "serializePairMs": 1.8,
+      "tailLongTask": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "textContentReadMs": 0.2,
+      "insertMode": "cdp"
+    },
+    {
+      "id": "S2",
+      "htmlBytes": 5660,
+      "inputHandlerMs": {
+        "p50": 2.2,
+        "p95": 3.23,
+        "max": 3.7
+      },
+      "cdpMs": {
+        "p50": 5.63,
+        "p95": 8.42
+      },
+      "updateIpcMs": 1,
+      "updateIpcUnderFlushMs": 1,
+      "updateIpcUnderFlushMaxMs": 1.2,
+      "updateIpcUnderFlushPhaseMs": 10,
+      "serializeProxyMs": 0.4,
+      "innerHtmlReadMs": 0.1,
+      "flushMs": 3.1,
+      "flushMsEndMs": 6.3,
+      "flushSamplesFirst": [
+        3.4,
+        3.1,
+        2.6
+      ],
+      "flushSamplesEnd": [
+        7.1,
+        6.3,
+        5.6
+      ],
+      "longTasks": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "inserted": 20,
+      "keysOk": true,
+      "stateFileBytes": 6862,
+      "keysPerSec": 12.85,
+      "capacityPerSec": 454.55,
+      "typingMs": 1557,
+      "keyCount": 20,
+      "gapMs": 60,
+      "tailPathMs": 1.8,
+      "serializePairMs": 0.7,
+      "tailLongTask": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "textContentReadMs": 0,
+      "insertMode": "cdp"
+    },
+    {
+      "id": "S2N",
+      "htmlBytes": 5660,
+      "inputHandlerMs": {
+        "p50": 2.45,
+        "p95": 3.6,
+        "max": 4
+      },
+      "cdpMs": {
+        "p50": 5.47,
+        "p95": 6.57
+      },
+      "updateIpcMs": null,
+      "updateIpcUnderFlushMs": null,
+      "updateIpcUnderFlushMaxMs": null,
+      "updateIpcUnderFlushPhaseMs": null,
+      "serializeProxyMs": null,
+      "innerHtmlReadMs": null,
+      "flushMs": null,
+      "flushMsEndMs": null,
+      "flushSamplesFirst": null,
+      "flushSamplesEnd": null,
+      "longTasks": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "inserted": 10,
+      "keysOk": true,
+      "stateFileBytes": 6862,
+      "keysPerSec": 4.54,
+      "capacityPerSec": 408.16,
+      "typingMs": 2202,
+      "keyCount": 10,
+      "gapMs": 200,
+      "tailPathMs": null,
+      "serializePairMs": null,
+      "tailLongTask": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "textContentReadMs": null,
+      "insertMode": "cdp"
+    },
+    {
+      "id": "S3",
+      "htmlBytes": 7900,
+      "inputHandlerMs": {
+        "p50": 2.2,
+        "p95": 3.72,
+        "max": 4.2
+      },
+      "cdpMs": {
+        "p50": 5.73,
+        "p95": 7.63
+      },
+      "updateIpcMs": 3,
+      "updateIpcUnderFlushMs": 1.1,
+      "updateIpcUnderFlushMaxMs": 1.3,
+      "updateIpcUnderFlushPhaseMs": 10,
+      "serializeProxyMs": 0.5,
+      "innerHtmlReadMs": 0.1,
+      "flushMs": 7.4,
+      "flushMsEndMs": 3.3,
+      "flushSamplesFirst": [
+        7.4,
+        8.2,
+        6
+      ],
+      "flushSamplesEnd": [
+        13.9,
+        3.3,
+        2
+      ],
+      "longTasks": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "inserted": 20,
+      "keysOk": true,
+      "stateFileBytes": 9430,
+      "keysPerSec": 12.75,
+      "capacityPerSec": 454.55,
+      "typingMs": 1569,
+      "keyCount": 20,
+      "gapMs": 60,
+      "tailPathMs": 2.5,
+      "serializePairMs": 1.2,
+      "tailLongTask": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "textContentReadMs": 0,
+      "insertMode": "cdp"
+    }
+  ],
+  "notes": [
+    "闸3 实例身份校验通过：window.sticky.list() 返回 1 张便签，标题恰为本次随机 nonce PERF-NONCE-c5d66416-9387-4496-afbf-5eb072d885bc，页面 #title 同值 —— 证明驱动的是本次 spawn 的隔离实例。",
+    "CDP 自身往返基线（Runtime.evaluate(\"1+1\") 10 次）：p50 0.57ms / max 1.08ms。cdpMs 已包含渲染层阻塞，故只作参考，结论以 inputHandlerMs 为准。",
+    "页面焦点状态：document.hasFocus()=true，activeElement 是 #editor=true，visibilityState=visible（探针时刻）。",
+    "插入方式：CDP Input.insertText，每次都校验正文尾部确实多了一个字符。",
+    "S0 安静窗口 updateIpcMs=2.3ms vs 写盘在飞时 updateIpcUnderFlushMs=0.9ms（比值 0.39×）—— 这是「落盘是否让按键排队」的直接判据。",
+    "S0 停手 180ms 那条路实测 0.6ms（3 次整克隆 + 1 次全量 sync IPC）；只算 2 次克隆的 serializePairMs=0.1ms，单次克隆代理 0ms —— 逐次克隆的净成本：第2次 +0.1ms，第3次 +0.5ms（含 IPC）。",
+    "S0 停手后渲染层长任务：0 个，最长 0ms，合计 0ms。",
+    "S0 flush 前/后对比：6.9ms（前，样本 [12.1,6.7,6.9]）vs 6.1ms（后，样本 [7,6.1,5.1]）→ 前后差 -0.8ms。",
+    "S0 updateIpcUnderFlush：中位 0.9ms / 最大 1ms（固定相位 +10ms，5 样本）—— 这是「停顿后第 1 个按键」的**典型值**，不是写入峰值。",
+    "S0 采样：inputHandler 20 个样本，cdpMs 20 个，打字总耗时 1555ms → 实测键速 12.86 键/秒（名义间隔 60ms，真实节拍被单键阻塞 + CDP 往返拉长），inserted=20（cdp 20 / exec 0）",
+    "S0 按键窗口 longtask 为 0 次：说明单次按键阻塞都短于 50ms 阈值（不是没测到）。",
+    "S1 安静窗口 updateIpcMs=4.2ms vs 写盘在飞时 updateIpcUnderFlushMs=2.1ms（比值 0.5×）—— 这是「落盘是否让按键排队」的直接判据。",
+    "S1 停手 180ms 那条路实测 6.5ms（3 次整克隆 + 1 次全量 sync IPC）；只算 2 次克隆的 serializePairMs=1.8ms，单次克隆代理 1ms —— 逐次克隆的净成本：第2次 +0.8ms，第3次 +4.7ms（含 IPC）。",
+    "S1 停手后渲染层长任务：0 个，最长 0ms，合计 0ms。",
+    "S1 flush 前/后对比：9.4ms（前，样本 [24.5,7.4,9.4]）vs 7.2ms（后，样本 [8.9,6.3,7.2]）→ 前后差 -2.2ms。",
+    "S1 updateIpcUnderFlush：中位 2.1ms / 最大 2.6ms（固定相位 +10ms，5 样本）—— 这是「停顿后第 1 个按键」的**典型值**，不是写入峰值。",
+    "S1 采样：inputHandler 20 个样本，cdpMs 20 个，打字总耗时 2361ms → 实测键速 8.47 键/秒（名义间隔 60ms，真实节拍被单键阻塞 + CDP 往返拉长），inserted=20（cdp 20 / exec 0）",
+    "S2 图片：20 张，单张 data URL 202651–203019 字符（目标 204800±30%），全部通过 Image.decode() 真实解码，示例尺寸 605×454。",
+    "S2 图片 data URL 合计 4057596 字符（约 3.87 MiB 字符量）。",
+    "S2 安静窗口 updateIpcMs=1ms vs 写盘在飞时 updateIpcUnderFlushMs=1ms（比值 1×）—— 这是「落盘是否让按键排队」的直接判据。",
+    "S2 停手 180ms 那条路实测 1.8ms（3 次整克隆 + 1 次全量 sync IPC）；只算 2 次克隆的 serializePairMs=0.7ms，单次克隆代理 0.4ms —— 逐次克隆的净成本：第2次 +0.3ms，第3次 +1.1ms（含 IPC）。",
+    "S2 停手后渲染层长任务：0 个，最长 0ms，合计 0ms。",
+    "S2 flush 前/后对比：3.1ms（前，样本 [3.4,3.1,2.6]）vs 6.3ms（后，样本 [7.1,6.3,5.6]）→ 前后差 3.2ms。",
+    "S2 updateIpcUnderFlush：中位 1ms / 最大 1.2ms（固定相位 +10ms，5 样本）—— 这是「停顿后第 1 个按键」的**典型值**，不是写入峰值。",
+    "S2 采样：inputHandler 20 个样本，cdpMs 20 个，打字总耗时 1557ms → 实测键速 12.85 键/秒（名义间隔 60ms，真实节拍被单键阻塞 + CDP 往返拉长），inserted=20（cdp 20 / exec 0）",
+    "S2 按键窗口 longtask 为 0 次：说明单次按键阻塞都短于 50ms 阈值（不是没测到）。",
+    "S2N 图片：20 张，单张 data URL 202651–203019 字符（目标 204800±30%），全部通过 Image.decode() 真实解码，示例尺寸 605×454。",
+    "S2N 图片 data URL 合计 4057596 字符（约 3.87 MiB 字符量）。",
+    "S2N 安静窗口 updateIpcMs=nullms vs 写盘在飞时 updateIpcUnderFlushMs=nullms（比值 0×）—— 这是「落盘是否让按键排队」的直接判据。",
+    "S2N 停手 180ms 那条路实测 nullms（3 次整克隆 + 1 次全量 sync IPC）；只算 2 次克隆的 serializePairMs=nullms，单次克隆代理 nullms —— 逐次克隆的净成本：第2次 +0ms，第3次 +0ms（含 IPC）。",
+    "S2N 停手后渲染层长任务：0 个，最长 0ms，合计 0ms。",
+    "S2N flush 前/后对比：nullms（前，样本 null）vs nullms（后，样本 null）→ 前后差 0ms。",
+    "S2N updateIpcUnderFlush：中位 nullms / 最大 nullms（固定相位 +nullms，5 样本）—— 这是「停顿后第 1 个按键」的**典型值**，不是写入峰值。",
+    "S2N 采样：inputHandler 10 个样本，cdpMs 10 个，打字总耗时 2202ms → 实测键速 4.54 键/秒（名义间隔 200ms，真实节拍被单键阻塞 + CDP 往返拉长），inserted=10（cdp 10 / exec 0）",
+    "S2N 按键窗口 longtask 为 0 次：说明单次按键阻塞都短于 50ms 阈值（不是没测到）。",
+    "S3 图片：40 张，单张 data URL 303635–304251 字符（目标 307200±30%），全部通过 Image.decode() 真实解码，示例尺寸 741×556。",
+    "S3 图片 data URL 合计 12155748 字符（约 11.59 MiB 字符量）。",
+    "S3 安静窗口 updateIpcMs=3ms vs 写盘在飞时 updateIpcUnderFlushMs=1.1ms（比值 0.37×）—— 这是「落盘是否让按键排队」的直接判据。",
+    "S3 停手 180ms 那条路实测 2.5ms（3 次整克隆 + 1 次全量 sync IPC）；只算 2 次克隆的 serializePairMs=1.2ms，单次克隆代理 0.5ms —— 逐次克隆的净成本：第2次 +0.7ms，第3次 +1.3ms（含 IPC）。",
+    "S3 停手后渲染层长任务：0 个，最长 0ms，合计 0ms。",
+    "S3 flush 前/后对比：7.4ms（前，样本 [7.4,8.2,6]）vs 3.3ms（后，样本 [13.9,3.3,2]）→ 前后差 -4.1ms。",
+    "S3 updateIpcUnderFlush：中位 1.1ms / 最大 1.3ms（固定相位 +10ms，5 样本）—— 这是「停顿后第 1 个按键」的**典型值**，不是写入峰值。",
+    "S3 采样：inputHandler 20 个样本，cdpMs 20 个，打字总耗时 1569ms → 实测键速 12.75 键/秒（名义间隔 60ms，真实节拍被单键阻塞 + CDP 往返拉长），inserted=20（cdp 20 / exec 0）",
+    "S3 按键窗口 longtask 为 0 次：说明单次按键阻塞都短于 50ms 阈值（不是没测到）。",
+    "落盘校验：app.quit() 后 sticky-notes.json 中便签 html 长度 7928，确实含尾部标记 PERFTAIL（preview 是否含标记=false）。"
+  ],
+  "dataOk": true,
+  "elapsedSec": 47
+}

@@ -1,0 +1,76 @@
+{
+  "scaleFactor": 1.25,
+  "allThreeRestored": [
+    {
+      "id": "native-qa",
+      "title": "真机一分钟提醒验收",
+      "collapsed": false,
+      "bounds": {
+        "x": 0,
+        "y": 80,
+        "width": 432,
+        "height": 452
+      }
+    },
+    {
+      "id": "d14dc326-0808-48e8-a9f1-6bf920e9fa03",
+      "title": "单屏验收二",
+      "collapsed": false,
+      "bounds": {
+        "x": 0,
+        "y": 129,
+        "width": 400,
+        "height": 500
+      }
+    },
+    {
+      "id": "18352b4b-2bba-4c6c-ac3b-6866a24f9197",
+      "title": "单屏验收三",
+      "collapsed": false,
+      "bounds": {
+        "x": 0,
+        "y": 180,
+        "width": 400,
+        "height": 500
+      }
+    }
+  ],
+  "keyboardOpen": true,
+  "escapeCollapsed": true,
+  "clipboardRestoredFormats": 8,
+  "overlayFixStayedHidden": true,
+  "restartPreservedExpandedGeometry": [
+    {
+      "id": "native-qa",
+      "collapsed": true,
+      "bounds": {
+        "x": 0,
+        "y": 80,
+        "width": 432,
+        "height": 452
+      }
+    },
+    {
+      "id": "d14dc326-0808-48e8-a9f1-6bf920e9fa03",
+      "collapsed": true,
+      "bounds": {
+        "x": 0,
+        "y": 128,
+        "width": 400,
+        "height": 500
+      }
+    },
+    {
+      "id": "18352b4b-2bba-4c6c-ac3b-6866a24f9197",
+      "collapsed": true,
+      "bounds": {
+        "x": 0,
+        "y": 180,
+        "width": 400,
+        "height": 500
+      }
+    }
+  ],
+  "collapsedEntryLabelFits": true,
+  "fixedCollapsedEntryWidth": 90
+}

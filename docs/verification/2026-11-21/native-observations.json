@@ -1,0 +1,54 @@
+{
+  "display": {
+    "count": 1,
+    "scaleFactor": 1.25,
+    "internal": true
+  },
+  "clipboard": {
+    "disabledSelectionPreservesAllPixels": true,
+    "realPasteImageSize": [
+      80,
+      60
+    ],
+    "originalNativeFormatsRestoredAndVerified": 8,
+    "enabledOverlayVisible": true,
+    "enabledOverlayCopyCorrect": true
+  },
+  "notification": {
+    "scheduled": [
+      {
+        "name": "show",
+        "error": "",
+        "at": 1795227375723
+      },
+      {
+        "name": "close",
+        "error": "",
+        "at": 1795227375783
+      },
+      {
+        "name": "show",
+        "error": "",
+        "at": 1795227560640
+      },
+      {
+        "name": "close",
+        "error": "",
+        "at": 1795227560674
+      }
+    ],
+    "retainedObject": [
+      {
+        "name": "show",
+        "error": "",
+        "at": 1795227560640
+      },
+      {
+        "name": "close",
+        "error": "",
+        "at": 1795227560674
+      }
+    ]
+  },
+  "shellNotificationState": 2
+}

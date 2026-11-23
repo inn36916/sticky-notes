@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: blob: sticky-att:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'" />
+<title>查看图片</title>
+<link rel="stylesheet" href="preview.css" />
+</head>
+<body>
+  <div class="stage" id="stage">
+    <img id="img" class="img" alt="" draggable="false" />
+  </div>
+
+  <div class="hud">
+    <span id="dim" class="dim">—</span>
+    <span class="sep"></span>
+    <span id="zoom" class="zoom">100%</span>
+    <span class="spacer"></span>
+    <span class="tip">滚轮缩放 · 拖拽平移 · 双击 1:1 / 适应</span>
+    <button class="btn" id="close">关闭</button>
+  </div>
+
+<script src="guard.js"></script>
+<script src="../lib/utils.js"></script>
+<script src="preview.js"></script>
+</body>
+</html>
