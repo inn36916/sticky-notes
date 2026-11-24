@@ -259,3 +259,38 @@ test('proxy streams SSE responses transparently', async (t) => {
   assert.match(txt, /翻译/)
   assert.match(txt, /\[DONE\]/)
 })
+
+test('proxy sends one upstream attempt for a timed-out request and accepts a later retry', async (t) => {
+  const server = await startMockHttpUpstream((req) => {
+    req.resume()
+  })
+  t.after(() => server.close())
+  let attempts = 0
+  const proxy = await createTranslationProxy({
+    provider: { baseUrl: server.url + '/v1', defaultModel: 'timeout-test' },
+    timeoutMs: 80,
+    fetchImpl (url, options) {
+      attempts++
+      if (attempts === 1) return fetch(url, options)
+      return new Response('{"choices":[{"message":{"content":"译文"}}]}', {
+        headers: { 'content-type': 'application/json' }
+      })
+    }
+  })
+  t.after(() => proxy.close())
+  const send = () => fetch(proxy.baseUrl + '/chat/completions', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + proxy.token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages: [{ role: 'user', content: 'Translate this paragraph.' }] }),
+    signal: AbortSignal.timeout(2000)
+  })
+  const timedOut = await send()
+  assert.equal(timedOut.status, 504)
+  assert.equal(timedOut.headers.get('x-should-retry'), 'false')
+  await timedOut.text()
+  assert.equal(attempts, 1)
+  const retry = await send()
+  assert.equal(retry.status, 200)
+  assert.equal((await retry.json()).choices[0].message.content, '译文')
+  assert.equal(attempts, 2)
+})

@@ -21,7 +21,7 @@ const {
   publishTranslatedFiles
 } = require('../lib/pdf-translate')
 
-const DEFAULT_TRANSLATE_TIMEOUT_MS = 15 * 60 * 1000 // 15 分钟（兼容首次下载模型）
+const DEFAULT_TRANSLATE_TIMEOUT_MS = 45 * 60 * 1000 // 45 分钟
 const DEFAULT_INSTALL_TIMEOUT_MS = 15 * 60 * 1000 // 15 分钟
 const TSINGHUA_PYPI_INDEX = 'https://pypi.tuna.tsinghua.edu.cn/simple'
 const ANSI_ESCAPE_RE = /\x1B\[[0-9;?]*[ -/]*[@-~]/g
@@ -456,7 +456,7 @@ function createPdfTranslateService ({
         provider: creds,
         fetchImpl,
         signal: abortController.signal,
-        timeoutMs: 60000,
+        timeoutMs: 120000,
         log,
         onEvent: (ev) => {
           if (typeof job._onProxyEvent === 'function') job._onProxyEvent(ev)

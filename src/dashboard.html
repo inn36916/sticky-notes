@@ -223,40 +223,28 @@
   <div class="modal" id="pdfTranslateModal" hidden>
     <div class="modal-card medium pdf-translate-modal" role="dialog" aria-modal="true" aria-labelledby="pdfTranslateTitle">
       <header class="modal-head">
+        <span class="pdf-head-icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 5h8M8 3.5V5M5 5c.6 3 2.4 5.4 5 7M9.5 8.5C8.5 10.6 7 12.4 4.5 13.8"/>
+            <path d="M11 16.5 14 9l3 7.5M12 14h4"/>
+          </svg>
+        </span>
         <div>
           <h2 id="pdfTranslateTitle">学术文献 PDF 翻译</h2>
           <p class="modal-sub">基于本地一次性 Token 代理与 pdf2zh_next，安全翻译保留公式与排版</p>
         </div>
-        <button class="icon-btn" id="pdfTransClose" title="关闭">✕</button>
+        <button type="button" class="modal-x" id="pdfTransClose" title="关闭">✕</button>
       </header>
-      <section class="ai-form">
-        <div class="pdf-env-box">
-          <div class="pdf-env-row">
-            <span class="engine-dot" id="pdfTransEnvDot"></span>
-            <span class="pdf-env-text" id="pdfTransEnvStatus">正在检测翻译引擎环境…</span>
-            <button type="button" class="btn primary mini-btn" id="pdfTransInstallBtn">一键安装环境</button>
-            <button type="button" class="btn danger mini-btn" id="pdfTransCancelInstallBtn" hidden>停止安装</button>
-            <button type="button" class="btn ghost mini-btn" id="pdfTransRefreshEnv">重新检测</button>
-          </div>
-          <div class="pdf-mirror-row" id="pdfTransInstallToolbar">
-            <label class="pdf-mirror-opt">
-              <input id="pdfTransUseMirror" type="checkbox" />
-              <span>使用清华 PyPI 镜像加速</span>
-            </label>
-            <span class="pdf-uv-hint" id="pdfTransUvHint"></span>
-          </div>
-          <div class="conv-note dim" id="pdfTransInstallGuide" hidden>
-            未检测到 uv，可先在 PowerShell 运行：<code>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code>
-            <button type="button" class="link" id="pdfTransCopyInstall">复制命令</button>
-          </div>
-          <div class="pdf-install-log-wrap" id="pdfTransInstallLogWrap" hidden>
-            <div class="pdf-install-msg" id="pdfTransInstallMsg">正在准备环境…</div>
-            <pre class="pdf-install-log" id="pdfTransInstallLog"></pre>
-          </div>
-          <div class="conv-note" id="pdfTransAiBadge"></div>
-        </div>
 
-        <div class="pdf-dropzone" id="pdfTransDrop">
+      <div class="pdf-modal-body" id="pdfTransModalBody">
+        <div class="pdf-dropzone" id="pdfTransDrop" tabindex="0" role="button" aria-label="选择或拖入学术 PDF 文件">
+          <span class="pdf-drop-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7Z"/>
+              <path d="M14 2v5h5"/>
+              <path d="M12 18v-6M9.5 14.5 12 12l2.5 2.5"/>
+            </svg>
+          </span>
           <div class="pdf-drop-info">
             <div class="pdf-drop-label" id="pdfTransFileLabel">请选择或拖入学术 PDF 文件</div>
             <div class="pdf-drop-path" id="pdfTransFilePath">默认输出双语对照 PDF，保存至原文件同目录</div>
@@ -264,95 +252,134 @@
           <button type="button" class="btn ghost" id="pdfTransPickBtn">选择 PDF…</button>
         </div>
 
-        <div class="pdf-grid-2">
-          <label class="field">
-            <span>运行方式</span>
-            <select id="pdfTransBackend">
-              <option value="cli">内置引擎（本地一次性代理 + pdf2zh_next）</option>
-              <option value="server">zotero-pdf2zh 本地服务（HTTP）</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>翻译服务</span>
-            <select id="pdfTransService">
-              <option value="active-ai">当前活跃 AI 模型（推荐 · 密钥不落盘）</option>
-              <option value="bing">Bing 翻译（免密钥）</option>
-              <option value="google">Google 翻译（免密钥）</option>
-              <option value="deepl">DeepL 翻译</option>
-            </select>
-          </label>
+        <div class="pdf-env-box">
+          <div class="pdf-env-row">
+            <span class="engine-dot" id="pdfTransEnvDot"></span>
+            <span class="pdf-env-text" id="pdfTransEnvStatus">正在检测翻译引擎环境…</span>
+            <div class="pdf-env-actions">
+              <button type="button" class="btn ghost mini-btn" id="pdfTransRefreshEnv">重新检测</button>
+              <button type="button" class="btn primary mini-btn" id="pdfTransInstallBtn">一键安装环境</button>
+              <button type="button" class="btn danger mini-btn" id="pdfTransCancelInstallBtn" hidden>停止安装</button>
+            </div>
+          </div>
+          <div class="conv-note" id="pdfTransAiBadge"></div>
+          <div class="pdf-mirror-row" id="pdfTransInstallToolbar">
+            <span class="pdf-uv-hint" id="pdfTransUvHint"></span>
+            <label class="pdf-mirror-opt">
+              <input id="pdfTransUseMirror" type="checkbox" />
+              <span>使用清华 PyPI 镜像加速</span>
+            </label>
+          </div>
+          <div class="conv-note dim pdf-install-guide" id="pdfTransInstallGuide" hidden>
+            未检测到 uv，可先在 PowerShell 运行：<code>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code>
+            <button type="button" class="link" id="pdfTransCopyInstall">复制命令</button>
+          </div>
+          <div class="pdf-install-log-wrap" id="pdfTransInstallLogWrap" hidden>
+            <div class="pdf-install-msg" id="pdfTransInstallMsg">正在准备环境…</div>
+            <pre class="pdf-install-log" id="pdfTransInstallLog"></pre>
+          </div>
         </div>
 
-        <label class="field" id="pdfTransCliWrap">
-          <span>CLI 路径（可选，留空自动探测 pdf2zh_next / pdf2zh）</span>
-          <input id="pdfTransCliPath" type="text" placeholder="例如 C:\Users\...\pdf2zh_next.exe" />
-        </label>
+        <div class="pdf-config-sections">
+          <section class="pdf-section-card" aria-label="翻译语言与版式">
+            <div class="pdf-section-title">翻译语言与版式</div>
+            <div class="pdf-grid-3">
+              <label class="fld field">
+                <span>源语言</span>
+                <select id="pdfTransLangIn">
+                  <option value="en">English (en)</option>
+                  <option value="auto">自动检测 (auto)</option>
+                  <option value="ja">日本語 (ja)</option>
+                  <option value="ko">한국어 (ko)</option>
+                  <option value="fr">Français (fr)</option>
+                  <option value="de">Deutsch (de)</option>
+                  <option value="es">Español (es)</option>
+                  <option value="ru">Русский (ru)</option>
+                  <option value="zh">中文 (zh)</option>
+                </select>
+              </label>
+              <label class="fld field">
+                <span>目标语言</span>
+                <select id="pdfTransLangOut">
+                  <option value="zh">简体中文 (zh)</option>
+                  <option value="zh-TW">繁體中文 (zh-TW)</option>
+                  <option value="en">English (en)</option>
+                  <option value="ja">日本語 (ja)</option>
+                  <option value="ko">한국어 (ko)</option>
+                  <option value="fr">Français (fr)</option>
+                  <option value="de">Deutsch (de)</option>
+                  <option value="es">Español (es)</option>
+                  <option value="ru">Русский (ru)</option>
+                </select>
+              </label>
+              <label class="fld field">
+                <span>输出版式</span>
+                <select id="pdfTransMode">
+                  <option value="dual">双语对照 (dual)</option>
+                  <option value="mono">仅译文 (mono)</option>
+                </select>
+              </label>
+            </div>
+          </section>
 
-        <label class="field" id="pdfTransServerWrap" hidden>
-          <span>zotero-pdf2zh 服务地址</span>
-          <input id="pdfTransServerUrl" type="text" placeholder="http://127.0.0.1:8888" />
-        </label>
+          <section class="pdf-section-card" aria-label="引擎与运行参数">
+            <div class="pdf-section-title">引擎与运行参数</div>
+            <div class="pdf-grid-2">
+              <label class="fld field">
+                <span>运行方式</span>
+                <select id="pdfTransBackend">
+                  <option value="cli">内置引擎（本地一次性代理 + pdf2zh_next）</option>
+                  <option value="server">zotero-pdf2zh 本地服务（HTTP）</option>
+                </select>
+              </label>
+              <label class="fld field">
+                <span>翻译服务</span>
+                <select id="pdfTransService">
+                  <option value="active-ai">当前活跃 AI 模型（推荐 · 密钥不落盘）</option>
+                  <option value="bing">Bing 翻译（免密钥）</option>
+                  <option value="google">Google 翻译（免密钥）</option>
+                  <option value="deepl">DeepL 翻译</option>
+                </select>
+              </label>
+            </div>
 
-        <div class="pdf-grid-3">
-          <label class="field">
-            <span>源语言</span>
-            <select id="pdfTransLangIn">
-              <option value="en">English (en)</option>
-              <option value="auto">自动检测 (auto)</option>
-              <option value="ja">日本語 (ja)</option>
-              <option value="ko">한국어 (ko)</option>
-              <option value="fr">Français (fr)</option>
-              <option value="de">Deutsch (de)</option>
-              <option value="es">Español (es)</option>
-              <option value="ru">Русский (ru)</option>
-              <option value="zh">中文 (zh)</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>目标语言</span>
-            <select id="pdfTransLangOut">
-              <option value="zh">简体中文 (zh)</option>
-              <option value="zh-TW">繁體中文 (zh-TW)</option>
-              <option value="en">English (en)</option>
-              <option value="ja">日本語 (ja)</option>
-              <option value="ko">한국어 (ko)</option>
-              <option value="fr">Français (fr)</option>
-              <option value="de">Deutsch (de)</option>
-              <option value="es">Español (es)</option>
-              <option value="ru">Русский (ru)</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>输出版式</span>
-            <select id="pdfTransMode">
-              <option value="dual">双语对照 (dual)</option>
-              <option value="mono">仅译文 (mono)</option>
-            </select>
-          </label>
+            <label class="fld field" id="pdfTransCliWrap">
+              <span>CLI 路径（可选，留空自动探测 pdf2zh_next / pdf2zh）</span>
+              <input id="pdfTransCliPath" type="text" placeholder="例如 C:\Users\...\pdf2zh_next.exe" />
+            </label>
+
+            <label class="fld field" id="pdfTransServerWrap" hidden>
+              <span>zotero-pdf2zh 服务地址</span>
+              <input id="pdfTransServerUrl" type="text" placeholder="http://127.0.0.1:8888" />
+            </label>
+
+            <div class="pdf-adv-row">
+              <label class="fld field">
+                <span>页码范围（可选）</span>
+                <input id="pdfTransPages" type="text" placeholder="全部页，如 1-5,8" />
+              </label>
+              <label class="fld field">
+                <span>并发 / QPS</span>
+                <input id="pdfTransThreads" type="number" min="1" max="16" value="4" />
+              </label>
+            </div>
+
+            <div class="pdf-checks-bar">
+              <label class="pdf-check pdf-skip-term-row">
+                <input id="pdfTransSkipTerm" type="checkbox" checked />
+                <span>跳过自动术语预提取（更快更稳，推荐）</span>
+              </label>
+              <label class="pdf-check">
+                <input id="pdfTransIgnoreCache" type="checkbox" />
+                <span>忽略缓存重译</span>
+              </label>
+            </div>
+          </section>
         </div>
-
-        <div class="pdf-grid-3 pdf-opts-row">
-          <label class="field">
-            <span>页码范围（可选）</span>
-            <input id="pdfTransPages" type="text" placeholder="全部页，或 1-5,8" />
-          </label>
-          <label class="field">
-            <span>并发 / QPS</span>
-            <input id="pdfTransThreads" type="number" min="1" max="16" value="4" />
-          </label>
-          <label class="pdf-check">
-            <input id="pdfTransIgnoreCache" type="checkbox" />
-            <span>忽略缓存重译</span>
-          </label>
-        </div>
-
-        <label class="pdf-check pdf-skip-term-row">
-          <input id="pdfTransSkipTerm" type="checkbox" checked />
-          <span>跳过自动术语预提取（更快更稳，推荐）</span>
-        </label>
 
         <div class="pdf-progress-box" id="pdfTransProgressWrap" hidden>
           <div class="pdf-progress-head">
+            <span class="pdf-progress-dot" aria-hidden="true"></span>
             <span id="pdfTransStatusMsg">准备开始翻译…</span>
             <b id="pdfTransPct">0%</b>
           </div>
@@ -364,17 +391,23 @@
         </div>
 
         <div class="pdf-outputs-box" id="pdfTransOutputs" hidden>
+          <span class="pdf-output-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="10" r="8"/>
+              <path d="m6.5 10.2 2.3 2.3 4.7-5"/>
+            </svg>
+          </span>
           <div class="pdf-outputs-list" id="pdfTransOutputList"></div>
           <button type="button" class="btn ghost mini-btn" id="pdfTransOpenDirBtn">打开所在目录</button>
         </div>
+      </div>
 
-        <footer class="ai-actions">
-          <button type="button" class="btn ghost" id="pdfTransSaveCfg">保存默认设置</button>
-          <span class="grow"></span>
-          <button type="button" class="btn danger" id="pdfTransCancelBtn" hidden>取消翻译</button>
-          <button type="button" class="btn primary" id="pdfTransStartBtn">开始翻译</button>
-        </footer>
-      </section>
+      <footer class="ai-actions pdf-modal-foot">
+        <button type="button" class="btn ghost" id="pdfTransSaveCfg">保存默认设置</button>
+        <span class="grow"></span>
+        <button type="button" class="btn danger" id="pdfTransCancelBtn" hidden>取消翻译</button>
+        <button type="button" class="btn primary" id="pdfTransStartBtn">开始翻译</button>
+      </footer>
     </div>
   </div>
 

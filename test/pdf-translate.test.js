@@ -90,7 +90,7 @@ test('buildCliInvocation passes only ephemeral proxy token via env and never exp
   assert.ok(nextInv.args.includes('--no-mono'))
   assert.ok(nextInv.args.includes('--ignore-cache'))
   assert.ok(nextInv.args.includes('--no-auto-extract-glossary'))
-  assert.equal(nextInv.args[nextInv.args.indexOf('--openai-timeout') + 1], '60')
+  assert.equal(nextInv.args[nextInv.args.indexOf('--openai-timeout') + 1], '130')
   assert.ok(nextInv.args.includes('--report-interval'))
   assert.equal(nextInv.env.FORCE_COLOR, '1')
   assert.equal(nextInv.env.COLUMNS, '200')

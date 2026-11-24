@@ -98,49 +98,70 @@
   }
   .pdf-translate-box {
     margin-top: 16px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
   }
-  .pdf-translate-box[hidden] { display: none; }
+  .pdf-translate-box[hidden] { display: none !important; }
   .pdf-trans-head {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 4px 8px;
+    margin-bottom: 10px;
   }
-  .pdf-trans-head .section-title { margin: 0; }
+  .pdf-trans-head .section-title {
+    margin: 0;
+    font-weight: 600;
+    color: var(--fg);
+  }
   .pdf-trans-sub {
+    flex-basis: 100%;
     font-size: 11px;
     color: var(--muted);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.45;
+    word-break: break-word;
   }
   .trans-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
   .trans-card {
     appearance: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
     background: var(--card);
-    border: 1px solid var(--border);
+    border: 1px solid var(--line);
     border-radius: 10px;
-    padding: 10px 8px;
+    padding: 11px 10px;
     font: inherit;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--text);
+    color: var(--fg);
     cursor: pointer;
     text-align: center;
-    transition: border-color .14s, background .14s, transform .12s;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+    transition: border-color .14s, background .14s, transform .12s, box-shadow .14s;
+  }
+  .trans-card-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .trans-card-desc {
+    font-size: 10.5px;
+    color: var(--muted);
+    line-height: 1.3;
   }
   .trans-card:hover:not(:disabled) {
     border-color: var(--accent);
-    background: rgba(91, 134, 229, .08);
+    background: #F0F5FF;
+    box-shadow: 0 3px 10px rgba(47, 111, 237, 0.12);
     transform: translateY(-1px);
   }
+  .trans-card:active:not(:disabled) { transform: scale(.98); }
   .trans-card:disabled { opacity: .5; cursor: not-allowed; }
   .trans-cancel {
     appearance: none;
@@ -151,9 +172,11 @@
     padding: 2px 8px;
     font: inherit;
     font-size: 11px;
+    font-weight: 500;
     cursor: pointer;
   }
-  .trans-cancel[hidden] { display: none; }
+  .trans-cancel:hover:not(:disabled) { background: rgba(192, 57, 43, .14); }
+  .trans-cancel[hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -177,12 +200,18 @@
     <section class="pdf-translate-box" id="pdfTranslateSection" hidden>
       <div class="pdf-trans-head">
         <div class="section-title">文献翻译（公式排版保留）</div>
-        <span class="pdf-trans-sub" id="pdfTransEnvSub"></span>
         <button type="button" class="trans-cancel" id="pdfTransBoxCancel" hidden>取消</button>
+        <span class="pdf-trans-sub" id="pdfTransEnvSub"></span>
       </div>
       <div class="trans-grid">
-        <button type="button" class="trans-card" id="pdfTransDualBtn" data-mode="dual">双语对照 PDF</button>
-        <button type="button" class="trans-card" id="pdfTransMonoBtn" data-mode="mono">纯译文 PDF</button>
+        <button type="button" class="trans-card" id="pdfTransDualBtn" data-mode="dual">
+          <span class="trans-card-title">双语对照 PDF</span>
+          <span class="trans-card-desc">原文与译文逐段对照</span>
+        </button>
+        <button type="button" class="trans-card" id="pdfTransMonoBtn" data-mode="mono">
+          <span class="trans-card-title">纯译文 PDF</span>
+          <span class="trans-card-desc">仅保留排版后译文</span>
+        </button>
       </div>
     </section>
 

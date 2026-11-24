@@ -850,10 +850,125 @@ body {
 }
 
 /* ---- 学术文献 PDF 翻译弹窗 ---- */
-.pdf-translate-modal { max-width: 560px; }
-.pdf-env-box {
-  padding: 10px 12px;
+.modal-card.pdf-translate-modal {
+  width: 680px;
+  max-width: 100%;
+  max-height: min(88vh, 720px);
+}
+.pdf-head-icon {
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
+  background: linear-gradient(135deg, #fff5d6, #fde69a);
+  border: 1px solid rgba(233, 169, 43, 0.35);
+  color: #8f5c00;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.pdf-head-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.pdf-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 18px 16px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  user-select: text;
+}
+.pdf-modal-body::-webkit-scrollbar { width: 9px; }
+.pdf-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(16, 24, 40, 0.14);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.pdf-modal-foot {
+  padding: 12px 18px;
+  margin-top: 0;
+  border-top: 1px solid var(--line);
+  background: #fafbfc;
+  flex: 0 0 auto;
+}
+
+.pdf-dropzone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 11px;
+  border: 1.5px dashed rgba(16, 24, 40, 0.18);
+  background: #fafbfc;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.pdf-dropzone:hover {
+  border-color: rgba(233, 169, 43, 0.72);
+  background: #fffcf4;
+}
+.pdf-dropzone:focus-visible {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(233, 169, 43, 0.16);
+}
+.pdf-dropzone[data-over="1"] {
+  border-color: var(--brand);
+  background: rgba(233, 169, 43, 0.08);
+  box-shadow: 0 0 0 3px rgba(233, 169, 43, 0.16);
+}
+.pdf-dropzone[data-has-file="1"] {
+  border-style: solid;
+  border-color: rgba(233, 169, 43, 0.55);
+  background: #fffdf7;
+}
+.pdf-drop-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid var(--line);
+  color: #6b7280;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.pdf-drop-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.pdf-dropzone[data-has-file="1"] .pdf-drop-icon,
+.pdf-dropzone[data-over="1"] .pdf-drop-icon {
+  background: #fff4d6;
+  border-color: rgba(233, 169, 43, 0.4);
+  color: #9a6500;
+}
+.pdf-drop-info { flex: 1 1 auto; min-width: 0; }
+.pdf-drop-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pdf-drop-path {
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdf-env-box {
+  padding: 11px 13px;
+  border-radius: 11px;
   border: 1px solid var(--line);
   background: #f8f9fb;
 }
@@ -868,115 +983,41 @@ body {
   min-width: 0;
   color: var(--fg);
   font-weight: 500;
-  word-break: break-all;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
-.mini-btn {
-  height: 26px;
-  padding: 0 9px;
-  font-size: 11px;
-}
-.pdf-dropzone {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 11px 13px;
-  border-radius: 10px;
-  border: 1px dashed #cbd5e1;
-  background: #fafbfc;
-  transition: border-color 0.15s, background 0.15s;
-}
-.pdf-dropzone[data-over="1"] {
-  border-color: var(--brand);
-  background: rgba(37, 99, 235, 0.05);
-}
-.pdf-drop-info { flex: 1 1 auto; min-width: 0; }
-.pdf-drop-label { font-size: 12.5px; font-weight: 600; color: var(--fg); }
-.pdf-drop-path {
-  margin-top: 2px;
-  font-size: 11px;
-  color: #6b7280;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.pdf-grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-.pdf-grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-.pdf-opts-row { align-items: end; }
-.pdf-check {
+.pdf-env-actions {
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 32px;
-  font-size: 12px;
-  color: var(--fg);
-  cursor: pointer;
-}
-.pdf-progress-box {
-  padding: 10px 12px;
-  border-radius: 9px;
-  border: 1px solid var(--line);
-  background: #f8fafc;
-}
-.pdf-progress-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 11.5px;
-  color: #374151;
-  margin-bottom: 6px;
-}
-.pdf-progress-head span {
-  flex: 1 1 auto;
-  min-width: 0;
-  white-space: normal;
-  word-break: break-word;
-}
-.pdf-progress-head b {
   flex: 0 0 auto;
 }
-.pdf-progress-track {
-  height: 6px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  overflow: hidden;
+.mini-btn {
+  height: 26px;
+  padding: 0 10px;
+  font-size: 11px;
+  border-radius: 7px;
 }
-.pdf-progress-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--brand);
-  transition: width 0.18s ease;
+
+#pdfTransAiBadge {
+  margin-top: 9px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  border: 1px solid transparent;
 }
-.pdf-outputs-box {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 9px;
-  border: 1px solid #bbf7d0;
-  background: #f0fdf4;
-  font-size: 11.5px;
-  color: #166534;
+#pdfTransAiBadge.conv-note.ok {
+  background: rgba(18, 183, 106, 0.08);
+  border-color: rgba(18, 183, 106, 0.22);
+  color: #067647;
 }
-.pdf-outputs-list {
-  flex: 1 1 auto;
-  min-width: 0;
-  word-break: break-all;
+#pdfTransAiBadge.conv-note.dim {
+  background: rgba(233, 169, 43, 0.08);
+  border-color: rgba(233, 169, 43, 0.24);
+  color: #8a5a00;
 }
-.btn.danger {
-  background: #dc2626;
-  color: #fff;
-  border-color: #dc2626;
-}
-.btn.danger:hover { background: #b91c1c; }
+
 .pdf-mirror-row {
   display: flex;
   align-items: center;
@@ -984,18 +1025,29 @@ body {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(16, 24, 40, 0.08);
   font-size: 11px;
   color: #4b5563;
 }
 .pdf-mirror-opt {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  cursor: pointer;
+}
+.pdf-mirror-opt input {
+  width: 13px;
+  height: 13px;
+  accent-color: var(--brand);
   cursor: pointer;
 }
 .pdf-uv-hint {
   color: #6b7280;
-  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+.pdf-install-guide {
+  margin-top: 8px;
 }
 .pdf-install-log-wrap {
   margin-top: 8px;
@@ -1008,13 +1060,13 @@ body {
   font-size: 11px;
   font-weight: 600;
   color: var(--fg);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 .pdf-install-log {
   margin: 0;
   max-height: 110px;
   overflow: auto;
-  padding: 6px 8px;
+  padding: 7px 9px;
   border-radius: 6px;
   background: #111827;
   color: #e5e7eb;
@@ -1024,14 +1076,199 @@ body {
   white-space: pre-wrap;
   word-break: break-all;
 }
-.pdf-skip-term-row {
-  height: auto;
-  margin-top: -2px;
+
+.pdf-config-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pdf-section-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 13px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #f8f9fb;
+}
+.pdf-section-title {
   font-size: 11.5px;
+  font-weight: 700;
+  color: #374151;
+  letter-spacing: 0.2px;
+}
+
+.pdf-translate-modal .field {
+  display: block;
+}
+.pdf-translate-modal .field > span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
   color: #4b5563;
 }
+.pdf-translate-modal .field input[type="text"],
+.pdf-translate-modal .field input[type="number"],
+.pdf-translate-modal .field select {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: #fff;
+  color: var(--fg);
+  font: 400 12.5px/1 inherit;
+  outline: none;
+  user-select: text;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.pdf-translate-modal .field input[type="text"]:hover,
+.pdf-translate-modal .field input[type="number"]:hover,
+.pdf-translate-modal .field select:hover {
+  border-color: rgba(16, 24, 40, 0.22);
+}
+.pdf-translate-modal .field input[type="text"]:focus,
+.pdf-translate-modal .field input[type="number"]:focus,
+.pdf-translate-modal .field select:focus {
+  border-color: rgba(233, 169, 43, 0.72);
+  box-shadow: 0 0 0 3px rgba(233, 169, 43, 0.14);
+}
+.pdf-translate-modal .field input::placeholder {
+  color: #a8aeb8;
+}
+
+.pdf-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.pdf-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.pdf-adv-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 128px;
+  gap: 10px;
+}
+.pdf-checks-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  padding-top: 2px;
+}
+.pdf-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: auto;
+  font-size: 11.5px;
+  color: #4b5563;
+  cursor: pointer;
+}
+.pdf-check input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+.pdf-skip-term-row {
+  margin-top: 0;
+}
+
+@media (max-width: 640px) {
+  .pdf-grid-2,
+  .pdf-grid-3,
+  .pdf-adv-row {
+    grid-template-columns: 1fr;
+  }
+  .pdf-env-row {
+    flex-wrap: wrap;
+  }
+  .pdf-env-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+.pdf-progress-box {
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #f8fafc;
+}
+.pdf-progress-box[data-state="done"] {
+  border-color: #bbf7d0;
+  background: #f4fbf6;
+}
+.pdf-progress-box[data-state="error"] {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+.pdf-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 7px;
+}
+.pdf-progress-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex: 0 0 auto;
+}
+.pdf-progress-box[data-state="running"] .pdf-progress-dot {
+  animation: pdf-pulse 1.2s ease-in-out infinite;
+}
+.pdf-progress-box[data-state="done"] .pdf-progress-dot {
+  background: #16a34a;
+}
+.pdf-progress-box[data-state="error"] .pdf-progress-dot {
+  background: #dc2626;
+}
+@keyframes pdf-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
+}
+.pdf-progress-head span:not(.pdf-progress-dot) {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: normal;
+  word-break: break-word;
+}
+.pdf-progress-head b {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+.pdf-progress-track {
+  height: 7px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+.pdf-progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f5be4d, #e9a92b);
+  transition: width 0.2s ease;
+}
+.pdf-progress-box[data-state="done"] .pdf-progress-fill {
+  background: #16a34a;
+}
+.pdf-progress-box[data-state="error"] .pdf-progress-fill {
+  background: #dc2626;
+}
 .pdf-proxy-live {
-  margin-top: 6px;
+  margin-top: 7px;
   font-size: 11px;
   color: #4b5563;
   line-height: 1.45;
@@ -1042,7 +1279,43 @@ body {
   font-weight: 600;
 }
 .pdf-trans-log {
-  margin-top: 6px;
-  max-height: 84px;
+  margin-top: 7px;
+  max-height: 88px;
 }
 
+.pdf-outputs-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  font-size: 12px;
+  color: #166534;
+}
+.pdf-output-icon {
+  width: 18px;
+  height: 18px;
+  color: #16a34a;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+}
+.pdf-output-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.pdf-outputs-list {
+  flex: 1 1 auto;
+  min-width: 0;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.btn.danger {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.btn.danger:hover { filter: brightness(1.04); }

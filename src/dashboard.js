@@ -776,6 +776,7 @@ document.getElementById('popupResetStyle').addEventListener('click', () => {
 
 // ---------------- 学术文献 PDF 翻译弹层 ----------------
 const pdfTranslateModal = document.getElementById('pdfTranslateModal')
+const pdfTransModalBody = document.getElementById('pdfTransModalBody')
 const pdfTransEnvDot = document.getElementById('pdfTransEnvDot')
 const pdfTransEnvStatus = document.getElementById('pdfTransEnvStatus')
 const pdfTransInstallBtn = document.getElementById('pdfTransInstallBtn')
@@ -906,6 +907,7 @@ function applyTranslateStatus (info) {
 
 function setSelectedPdfFile (filePath) {
   selectedPdfPath = String(filePath || '').trim()
+  if (pdfTransDrop) pdfTransDrop.dataset.hasFile = selectedPdfPath ? '1' : '0'
   if (selectedPdfPath) {
     const parts = selectedPdfPath.split(/[\\/]/)
     pdfTransFileLabel.textContent = parts[parts.length - 1] || selectedPdfPath
@@ -923,7 +925,11 @@ function setTranslateRunningUi (running) {
   pdfTransCancelBtn.hidden = !running
   pdfTransCancelBtn.disabled = !running
   if (pdfTransInstallBtn) pdfTransInstallBtn.disabled = running || pdfInstallRunning || !uvAvailable
-  if (running) pdfTransProgressWrap.hidden = false
+  if (running) {
+    pdfTransProgressWrap.hidden = false
+    pdfTransProgressWrap.dataset.state = 'running'
+    if (pdfTransModalBody) pdfTransModalBody.scrollTop = pdfTransModalBody.scrollHeight
+  }
 }
 
 function setInstallRunningUi (running) {
@@ -1019,14 +1025,32 @@ pdfTransCancelInstallBtn.addEventListener('click', async () => {
   await api.pdfTranslateCancelInstall(activeInstallId || undefined)
 })
 
-document.getElementById('pdfTransPickBtn').addEventListener('click', async () => {
+async function pickPdfForTranslate () {
   if (typeof api.pdfTranslatePickPdf !== 'function') return
   const res = await api.pdfTranslatePickPdf()
   if (res && !res.canceled && res.filePath) {
     setSelectedPdfFile(res.filePath)
     pdfTransOutputs.hidden = true
   }
+}
+
+document.getElementById('pdfTransPickBtn').addEventListener('click', (e) => {
+  e.stopPropagation()
+  void pickPdfForTranslate()
 })
+
+if (pdfTransDrop) {
+  pdfTransDrop.addEventListener('click', (e) => {
+    if (e.target && e.target.closest('button')) return
+    void pickPdfForTranslate()
+  })
+  pdfTransDrop.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      void pickPdfForTranslate()
+    }
+  })
+}
 
 pdfTransDrop.addEventListener('dragover', (e) => {
   e.preventDefault()
@@ -1108,6 +1132,7 @@ pdfTransStartBtn.addEventListener('click', async () => {
   try {
     const res = await api.pdfTranslateRun(Object.assign({ filePath: selectedPdfPath }, patch))
     if (res && res.ok) {
+      pdfTransProgressWrap.dataset.state = 'done'
       pdfTransBar.style.width = '100%'
       pdfTransPct.textContent = '100%'
       pdfTransStatusMsg.textContent = '翻译完成，已输出至原 PDF 同目录'
@@ -1117,11 +1142,14 @@ pdfTransStartBtn.addEventListener('click', async () => {
         pdfTransOutputList.innerHTML = outs.map(o => `<div>已生成：<b>${escapeHtml(o.name)}</b></div>`).join('')
         pdfTransOutputs.hidden = false
       }
+      if (pdfTransModalBody) pdfTransModalBody.scrollTop = pdfTransModalBody.scrollHeight
       statusEl.textContent = '学术文献 PDF 翻译完成'
     } else {
+      pdfTransProgressWrap.dataset.state = 'error'
       pdfTransStatusMsg.textContent = (res && res.error) ? res.error : '翻译未完成'
     }
   } catch (err) {
+    pdfTransProgressWrap.dataset.state = 'error'
     pdfTransStatusMsg.textContent = `翻译失败：${err && err.message ? err.message : err}`
   } finally {
     setTranslateRunningUi(false)
@@ -1165,9 +1193,13 @@ if (typeof api.onPdfTranslateProgress === 'function') {
       }
     }
     if (ev.status === 'done' && Array.isArray(ev.outputs) && ev.outputs.length > 0) {
+      pdfTransProgressWrap.dataset.state = 'done'
       lastTranslatedPath = ev.outputs[0].path
       pdfTransOutputList.innerHTML = ev.outputs.map(o => `<div>已生成：<b>${escapeHtml(o.name)}</b></div>`).join('')
       pdfTransOutputs.hidden = false
+      if (pdfTransModalBody) pdfTransModalBody.scrollTop = pdfTransModalBody.scrollHeight
+    } else if (ev.status === 'error') {
+      pdfTransProgressWrap.dataset.state = 'error'
     }
   })
 }
